@@ -121,7 +121,12 @@ bool task1() {
 	std::string* test = sonnetList.data();
 	quickSort(test, 0, sonnetList.size() - 1);
 
-	std::cout << "yayyyy" << std::endl;
+	BinaryTree* tree = new BinaryTree;
+
+	for(int i = 0; i < sonnetList.size(); i++) {
+		//tree->insert(test[i]);
+		tree->insert_Iterative(test[i]);
+	}
 
 	return true;
 }
@@ -139,15 +144,15 @@ int main() {
 
 	std::cout << "Task1: " << std::boolalpha << task1();
 	end = std::chrono::high_resolution_clock::now();
-	auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-	std::cout << " Took " << duration << " microseconds to execute" << std::endl;
+	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	std::cout << " Took " << duration << " milliseconds to execute" << std::endl;
 
 	start = std::chrono::high_resolution_clock::now();
 
 	std::cout << "Task2: " << std::boolalpha << task2();
 	end = std::chrono::high_resolution_clock::now();
-	duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-	std::cout << " Took " << duration << " microseconds to execute" << std::endl;
+	duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+	std::cout << " Took " << duration << " milliseconds to execute" << std::endl;
 
 	return 0;
 }
