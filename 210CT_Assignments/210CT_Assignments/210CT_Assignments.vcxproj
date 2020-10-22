@@ -139,10 +139,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Tester2.cpp" />
-    <ClCompile Include="src\Task1.cpp" />
+    <ClCompile Include="src\BinaryTree.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Task1.h" />
+    <ClInclude Include="src\BinaryTree.h" />
+    <ClInclude Include="src\FileParser.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="res\Shakespeare.txt" />
