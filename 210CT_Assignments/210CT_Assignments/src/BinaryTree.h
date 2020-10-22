@@ -3,12 +3,14 @@
 #include <string>
 
 struct BinaryTreeNode {
-	const std::string word;
+	std::string word;
+
+	int count = 0; // Number of copies of this word
 
 	// Pointers to the next node
-	struct Node* previous = nullptr;
-	struct Node* nextLeft = nullptr;
-	struct Node* nextRight = nullptr;
+	struct BinaryTreeNode* previous = nullptr;
+	struct BinaryTreeNode* nextLeft = nullptr;
+	struct BinaryTreeNode* nextRight = nullptr;
 };
 
 // A BinaryTree is a Doubly-linked list
@@ -17,9 +19,10 @@ private:
 	BinaryTreeNode* root = nullptr;
 
 private:
-	void destroy_tree();
-	void insert(std::string word, BinaryTreeNode* leaf);
-	void remove(std::string word, BinaryTreeNode* leaf);
+	void destroy_nodes(BinaryTreeNode* node);
+	void insert(std::string word, BinaryTreeNode* node);
+	void remove(std::string word, BinaryTreeNode* node);
+	BinaryTreeNode* search(std::string word, BinaryTreeNode* node);
 
 public:
 	BinaryTree();
