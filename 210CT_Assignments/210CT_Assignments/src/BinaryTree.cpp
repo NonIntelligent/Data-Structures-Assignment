@@ -122,6 +122,7 @@ BinaryTreeNode* BinaryTree::insertArrayBalanced(std::string arr_words[], int sta
 	return node;
 }
 
+// Insert words iteratively saving memory and stack space (best with unsorted lists)
 void BinaryTree::insert_Iterative(std::string & word) {
 	BinaryTreeNode* a = root; // ptr to traverse down the tree to find node location
 	BinaryTreeNode* b = nullptr; // Ptr follows a in traversal
@@ -171,10 +172,25 @@ void BinaryTree::insert_Iterative(std::string & word) {
 void BinaryTree::remove_All_Of_Word(std::string& word) {
 }
 
+// Search for a word in the tree (can be nullptr)
 BinaryTreeNode * BinaryTree::search(std::string word) {
 	return search(word, root);
 }
 
+int BinaryTree::howManyOf(std::string word) {
+	search(word);
+	return 0;
+}
+
+void BinaryTree::printMostCommonWords(int wordCount) {
+	bool accounted = false;
+
+	while(!accounted) {
+		accounted = true;
+	}
+}
+
+// Returns tha depth of the tree
 int BinaryTree::getMaxDepth() {
 	if(maxdepth > 0) return maxdepth;
 

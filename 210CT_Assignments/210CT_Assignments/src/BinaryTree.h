@@ -8,7 +8,7 @@ struct BinaryTreeNode {
 	int count = 0; // Number of copies of this word
 
 	// Pointers to the nodes around it
-	struct BinaryTreeNode* previous = nullptr;
+	struct BinaryTreeNode* previous = nullptr; // previous is currently not used
 	struct BinaryTreeNode* nextLeft = nullptr;
 	struct BinaryTreeNode* nextRight = nullptr;
 };
@@ -26,6 +26,7 @@ private:
 	void insert(std::string& word, BinaryTreeNode* node);
 	void remove(std::string& word, BinaryTreeNode* node);
 	BinaryTreeNode* search(std::string& word, BinaryTreeNode* node);
+
 	int getMaxDepth(BinaryTreeNode* node);
 
 public:
@@ -37,8 +38,11 @@ public:
 	void insert_Iterative(std::string& word);
 	void remove_All_Of_Word(std::string& word);
 	BinaryTreeNode* search(std::string word);
+
+	int howManyOf(std::string word);
+	void printMostCommonWords(int wordCount);
+
 	int getMaxDepth();
 	void setRoot(BinaryTreeNode* root);
-public:
 
 };

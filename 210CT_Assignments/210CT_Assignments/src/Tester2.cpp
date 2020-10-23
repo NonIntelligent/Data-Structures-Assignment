@@ -43,7 +43,7 @@ int partition(std::string* arr, int start, int end) {
 // https://www.geeksforgeeks.org/quicksort-tail-call-optimization-reducing-worst-case-space-log-n/
 // Quicksort algorithm to sort a list of strings
 // Tail-cull optimisation was used to reduce space complexity as we are iterating over 17000 words
-// Worst case space is now O(Log n)
+// Worst case space is now O(Log n) as opposed to O(n)
 void quickSort(std::string* arr, int start, int end) {
 
 	while(start < end) {
@@ -110,42 +110,49 @@ vectorString parseTxtAsWords(int lineStart, int lineEnd, std::string filePath) {
 
 	// Clears buffers
 	stream.close();
-
+	// Can be later accessed as array without any empty elements
 	result.shrink_to_fit();
 	return result;
 }
 
-// Tests if task 1 succeded
-bool task1() {
-	vectorString sonnetList = parseTxtAsWords(253, 2867, "res/Shakespeare.txt");
-	std::string* test = sonnetList.data();
-	quickSort(test, 0, sonnetList.size() - 1);
+/* For Task1 I parse the words from the shakespeare text, excluding numbers ands single apostrophes.
+Next I sort the list in ascending order then insert that into a Binary Search Tree that
+allows for duplicate nodes.
+Task1 takes ~ 1.3 seconds to complete on main computer */
+bool task1(vectorString& list, BinaryTree& binaryTree) {
+	// Parsed words includes capital letters as seperate words.
+	list = parseTxtAsWords(253, 2867, "res/Shakespeare.txt");
+	std::string* test = list.data();
+	// Sort the list in acending order (A < z)
+	quickSort(test, 0, list.size() - 1);
 
-	BinaryTree* tree = new BinaryTree;
+	binaryTree = BinaryTree();
 
 	// This version of binary tree takes accepts duplicate nodes but is also balanced.
 	// The input requires a sorted list though
-	tree->setRoot(tree->insertArrayBalanced(test, 0, sonnetList.size() - 1));
-	int depth = tree->getMaxDepth();
+	binaryTree.setRoot(binaryTree.insertArrayBalanced(test, 0, list.size() - 1));
+	int depth = binaryTree.getMaxDepth();
 
-	std::cout << depth << std::endl;
-	std::cout << "yayy" << std::endl;
+	if(depth == 0) return false;
 
 	return true;
 }
 
 // Tests if task 2 succeded
 bool task2() {
-	vectorString sonnetList = parseTxtAsWords(253, 2867, "res/Shakespeare.txt");
 
 	return true;
 }
 
 int main() {
+	// Can be used in other tasks and destoryed at end of main
+	vectorString wordsList;
+	BinaryTree searchTree;
+
 	auto start = std::chrono::high_resolution_clock::now();
 	auto end = start;
 
-	std::cout << "Task1: " << std::boolalpha << task1();
+	std::cout << "Task1: " << std::boolalpha << task1(wordsList, searchTree);
 	end = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 	std::cout << " Took " << duration << " milliseconds to execute" << std::endl;
@@ -156,6 +163,7 @@ int main() {
 	end = std::chrono::high_resolution_clock::now();
 	duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 	std::cout << " Took " << duration << " milliseconds to execute" << std::endl;
+
 
 	return 0;
 }
