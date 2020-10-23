@@ -7,7 +7,8 @@ struct BinaryTreeNode {
 
 	int count = 0; // Number of copies of this word
 
-	// Pointers to the next node
+	// Pointers to the nodes around it
+	struct BinaryTreeNode* previous = nullptr;
 	struct BinaryTreeNode* nextLeft = nullptr;
 	struct BinaryTreeNode* nextRight = nullptr;
 };
@@ -16,7 +17,8 @@ struct BinaryTreeNode {
 class BinaryTree {
 private:
 	BinaryTreeNode* root = nullptr;
-	int currentdepth = 0; // 0 is before root node
+	// Used to help calculate the max depth of the tree.
+	int currentdepth = 0;
 	int maxdepth = 0; // Used to iterate over the tree (0 is no root node)
 
 private:
@@ -24,16 +26,19 @@ private:
 	void insert(std::string& word, BinaryTreeNode* node);
 	void remove(std::string& word, BinaryTreeNode* node);
 	BinaryTreeNode* search(std::string& word, BinaryTreeNode* node);
+	int getMaxDepth(BinaryTreeNode* node);
 
 public:
 	BinaryTree();
 	~BinaryTree();
 
 	void insert(std::string& word);
+	BinaryTreeNode* insertArrayBalanced(std::string arr_words[], int start, int end);
 	void insert_Iterative(std::string& word);
 	void remove_All_Of_Word(std::string& word);
 	BinaryTreeNode* search(std::string word);
-
+	int getMaxDepth();
+	void setRoot(BinaryTreeNode* root);
 public:
 
 };

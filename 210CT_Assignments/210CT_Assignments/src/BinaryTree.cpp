@@ -67,6 +67,20 @@ BinaryTreeNode* BinaryTree::search(std::string& word, BinaryTreeNode * node) {
 	else return nullptr;
 }
 
+int BinaryTree::getMaxDepth(BinaryTreeNode * node) {
+	
+	// If node does not exist, do not change depth
+	if(node == nullptr) return 0;
+
+	int leftdepth = getMaxDepth(node->nextLeft);
+	int rightdepth = getMaxDepth(node->nextRight);
+
+	if(leftdepth > rightdepth)
+		return leftdepth + 1;
+	else
+		return rightdepth + 1;
+}
+
 BinaryTree::BinaryTree() {
 }
 
@@ -87,6 +101,25 @@ void BinaryTree::insert(std::string& word) {
 		root->word = word;
 		root->count++;
 	}
+}
+
+// Given a sorted array, this method will construct a binary search tree with duplicate nodes.
+// This method should only be used on an empty/destoryed tree
+BinaryTreeNode* BinaryTree::insertArrayBalanced(std::string arr_words[], int start, int end) {
+
+	// no more nodes to traverse/create
+	if(start > end) return nullptr;
+
+	// Make the middle element of each list a node
+	int mid = (start + end) / 2;
+	BinaryTreeNode* node = new BinaryTreeNode;
+
+	node->word = arr_words[mid];
+	node->count++;
+	node->nextLeft = insertArrayBalanced(arr_words, start, mid - 1);
+	node->nextRight = insertArrayBalanced(arr_words, mid + 1, end);
+
+	return node;
 }
 
 void BinaryTree::insert_Iterative(std::string & word) {
@@ -140,4 +173,16 @@ void BinaryTree::remove_All_Of_Word(std::string& word) {
 
 BinaryTreeNode * BinaryTree::search(std::string word) {
 	return search(word, root);
+}
+
+int BinaryTree::getMaxDepth() {
+	if(maxdepth > 0) return maxdepth;
+
+	return maxdepth = getMaxDepth(root);
+}
+
+// Set the root of the binary tree if it has no root (parameter does not accept nullptr)
+void BinaryTree::setRoot(BinaryTreeNode * root) {
+	if(root == nullptr) return;
+	if(this->root == nullptr) this->root = root;
 }

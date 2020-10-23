@@ -123,22 +123,12 @@ bool task1() {
 
 	BinaryTree* tree = new BinaryTree;
 
-	// Insert middle element as root of binary tree
-	tree->insert_Iterative(test[sonnetList.size() / 2]);
+	// This version of binary tree takes accepts duplicate nodes but is also balanced.
+	// The input requires a sorted list though
+	tree->setRoot(tree->insertArrayBalanced(test, 0, sonnetList.size() - 1));
+	int depth = tree->getMaxDepth();
 
-	// Insert first half of elements to tree
-	for(int i = 0; i < sonnetList.size() / 2; i++) {
-		//tree->insert(test[i]);
-		tree->insert_Iterative(test[i]);
-	}
-
-	// Insert second half of elements to tree
-	for(int j = sonnetList.size() / 2 + 1; j < sonnetList.size(); j++) {
-		tree->insert_Iterative(test[j]);
-	}
-
-	// This causes an unbalanced list (insert method not meant for sorted lists)
-
+	std::cout << depth << std::endl;
 	std::cout << "yayy" << std::endl;
 
 	return true;
