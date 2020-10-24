@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
 struct BinaryTreeNode {
 	std::string word;
@@ -22,12 +23,15 @@ private:
 	int maxdepth = 0; // Used to iterate over the tree (0 is no root node)
 
 private:
-	void destroy_nodes(BinaryTreeNode* node);
-	void insert(std::string& word, BinaryTreeNode* node);
-	void remove(std::string& word, BinaryTreeNode* node);
-	BinaryTreeNode* search(std::string& word, BinaryTreeNode* node);
+	void _destroy_nodes(BinaryTreeNode* node);
+	void _insert(std::string& word, BinaryTreeNode* node);
+	void _remove(std::string& word, BinaryTreeNode* node);
+	BinaryTreeNode* _search(std::string& word, BinaryTreeNode* node);
 
-	int getMaxDepth(BinaryTreeNode* node);
+	int _howManyOf(std::string word, BinaryTreeNode* node);
+	void _findMostCommonWords(std::unordered_map<std::string, BinaryTreeNode*>& map,BinaryTreeNode* node, int level);
+
+	int _getMaxDepth(BinaryTreeNode* node);
 
 public:
 	BinaryTree();

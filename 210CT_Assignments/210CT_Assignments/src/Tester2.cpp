@@ -137,10 +137,23 @@ bool task1(vectorString& list, BinaryTree& binaryTree) {
 
 	return true;
 }
+/*
+For task2 part a I test the method on some words that I know how many there is.
+For part b I use part a and an unordered map to count up a list of words, providing a map with no duplicate words.
+The map has values to one node that contains the word and with that I push the nodes into a priority queue for comparison and to print.
+However the method that traverses the tree and counts the words takes extremely long to compute.
+Task2 currently takes ~ 431 seconds to execute
+*/
+bool task2(BinaryTree& binaryTree) {
+	// Tests counting of certain words of known number of appearences
+	int count1 = binaryTree.howManyOf("the");
+	int count2 = binaryTree.howManyOf("I");
+	int count3 = binaryTree.howManyOf("zealous");
+	int count4 = binaryTree.howManyOf("gobbledygook");
 
-// Tests if task 2 succeded
-bool task2() {
+	//binaryTree.printMostCommonWords(66);
 
+	if(count1 != 355 || count2 != 344 || count3 != 1 || count4 != 0) return false;
 	return true;
 }
 
@@ -159,7 +172,7 @@ int main() {
 
 	start = std::chrono::high_resolution_clock::now();
 
-	std::cout << "Task2: " << std::boolalpha << task2();
+	std::cout << "Task2: " << std::boolalpha << task2(searchTree);
 	end = std::chrono::high_resolution_clock::now();
 	duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 	std::cout << " Took " << duration << " milliseconds to execute" << std::endl;

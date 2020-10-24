@@ -1,23 +1,26 @@
 #include "BinaryTree.h"
 
+#include <iostream>
+#include <queue>
+
 // Recaim memory by deleting nodes from tree
-void BinaryTree::destroy_nodes(BinaryTreeNode* node) {
+void BinaryTree::_destroy_nodes(BinaryTreeNode* node) {
 	if(node != nullptr) {
 		// First recursively delete all nodes that are pointed to
 		// then delete the current node
-		destroy_nodes(node->nextLeft);
-		destroy_nodes(node->nextRight);
+		_destroy_nodes(node->nextLeft);
+		_destroy_nodes(node->nextRight);
 		delete node;
 	}
 }
 
 // Recursively search for the node to place the word in.
 // If node is a duplicate then increment count (saves a lot of space and is easy to get duplicate count)
-void BinaryTree::insert(std::string& word, BinaryTreeNode * node) {
+void BinaryTree::_insert(std::string& word, BinaryTreeNode * node) {
 	if(word < node->word) { // Word is less than current node
 		if(node->nextLeft != nullptr) {
 			currentdepth++;
-			insert(word, node->nextLeft);
+			_insert(word, node->nextLeft);
 		}
 		else {
 			if(currentdepth > maxdepth) maxdepth = currentdepth;
@@ -35,7 +38,7 @@ void BinaryTree::insert(std::string& word, BinaryTreeNode * node) {
 	else { // Word is greater than node
 		if(node->nextRight != nullptr) {
 			currentdepth++;
-			insert(word, node->nextRight);
+			_insert(word, node->nextRight);
 		}
 		else {
 			if(currentdepth > maxdepth) maxdepth = currentdepth;
@@ -48,32 +51,63 @@ void BinaryTree::insert(std::string& word, BinaryTreeNode * node) {
 
 }
 
-void BinaryTree::remove(std::string& word, BinaryTreeNode * node) {
+void BinaryTree::_remove(std::string& word, BinaryTreeNode * node) {
 }
 
 // Searches through the nodes starting at root to find the word
-BinaryTreeNode* BinaryTree::search(std::string& word, BinaryTreeNode * node) {
+BinaryTreeNode* BinaryTree::_search(std::string& word, BinaryTreeNode * node) {
 	if(node != nullptr) {
 		if(word == node->word) {
 			return node;
 		}
 		if(word < node->word) {
-			return search(word, node->nextLeft);
+			return _search(word, node->nextLeft);
 		}
 		else {
-			return search(word, node->nextRight);
+			return _search(word, node->nextRight);
 		}
 	}
 	else return nullptr;
 }
 
-int BinaryTree::getMaxDepth(BinaryTreeNode * node) {
+// Recursively counts the number of times a certain word appears in the tree
+int BinaryTree::_howManyOf(std::string word, BinaryTreeNode * node) {
+	if(node == nullptr) return 0;
+
+	int countLeft = _howManyOf(word, node->nextLeft);
+	int countRight = _howManyOf(word, node->nextRight);
+
+	if(node->word == word) 
+		return countLeft + countRight + 1; // Add up all of left and right + self
+	else 
+		return countLeft + countRight; // return what node has counted so far
+}
+
+/* Find the most common words in the binary tree and add them to the unordered map.
+This method uses breadth first traversal to count each word in the tree ignoring,
+binary tree nodes with the same value.
+*/
+void BinaryTree::_findMostCommonWords(std::unordered_map<std::string, BinaryTreeNode*>& map, BinaryTreeNode * node, int level) {
+	if(node == nullptr) return;
+
+	if(level == 1 && map.find(node->word) == map.end()) {
+		int count = _howManyOf(node->word, root);
+		node->count = count;
+		map.emplace(node->word, node);
+	}
+	else if(level > 1) {
+		_findMostCommonWords(map, node->nextLeft, level - 1);
+		_findMostCommonWords(map, node->nextRight, level - 1);
+	}
+}
+
+int BinaryTree::_getMaxDepth(BinaryTreeNode * node) {
 	
 	// If node does not exist, do not change depth
 	if(node == nullptr) return 0;
 
-	int leftdepth = getMaxDepth(node->nextLeft);
-	int rightdepth = getMaxDepth(node->nextRight);
+	int leftdepth = _getMaxDepth(node->nextLeft);
+	int rightdepth = _getMaxDepth(node->nextRight);
 
 	if(leftdepth > rightdepth)
 		return leftdepth + 1;
@@ -86,14 +120,14 @@ BinaryTree::BinaryTree() {
 
 // Recaim all memory taken by nodes
 BinaryTree::~BinaryTree() {
-	destroy_nodes(root);
+	_destroy_nodes(root);
 }
 
 // Insert a word into the binary tree
 void BinaryTree::insert(std::string& word) {
 	// Insert following the root path else create a root
 	if(root != nullptr) {
-		insert(word, root);
+		_insert(word, root);
 	}
 	else {
 		maxdepth = 1;
@@ -174,27 +208,42 @@ void BinaryTree::remove_All_Of_Word(std::string& word) {
 
 // Search for a word in the tree (can be nullptr)
 BinaryTreeNode * BinaryTree::search(std::string word) {
-	return search(word, root);
+	return _search(word, root);
 }
 
+// Altered version of the getMaxDepth method which increments a counter on any duplicates.
 int BinaryTree::howManyOf(std::string word) {
-	search(word);
-	return 0;
+	if(root == nullptr) return -1;
+
+	return _howManyOf(word, root);
 }
 
+// https://en.cppreference.com/w/cpp/container/priority_queue
+// This method creates a map and a priority queue to traverse the tree, count the number of duplicates
+// and print out the top duplicate words
 void BinaryTree::printMostCommonWords(int wordCount) {
-	bool accounted = false;
+	std::unordered_map<std::string, BinaryTreeNode*> hashmap;
 
-	while(!accounted) {
-		accounted = true;
+	auto cmp = [](BinaryTreeNode* left, BinaryTreeNode* right) {return left->count > right->count; };
+	std::priority_queue<BinaryTreeNode*, std::vector<BinaryTreeNode*> ,decltype(cmp)> queue(cmp);
+
+	int depth = getMaxDepth();
+	// Time consuming for loop as i reaches depth
+	for(int i = 1; i <= depth; i++) {
+		_findMostCommonWords(hashmap, root, i);
 	}
+
+	for(auto it = hashmap.begin(); it != hashmap.end(); it++) {
+		queue.push(it->second);
+	}
+	
 }
 
-// Returns tha depth of the tree
+// Returns tha depth of the tree (root inclusive)
 int BinaryTree::getMaxDepth() {
 	if(maxdepth > 0) return maxdepth;
 
-	return maxdepth = getMaxDepth(root);
+	return maxdepth = _getMaxDepth(root);
 }
 
 // Set the root of the binary tree if it has no root (parameter does not accept nullptr)
