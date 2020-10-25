@@ -142,7 +142,7 @@ For task2 part a I test the method on some words that I know how many there is.
 For part b I use part a and an unordered map to count up a list of words, providing a map with no duplicate words.
 The map has values to one node that contains the word and with that I push the nodes into a priority queue for comparison and to print.
 However the method that traverses the tree and counts the words takes extremely long to compute.
-Task2 currently takes ~ 431 seconds to execute
+Task2 currently takes ~ 2.5 seconds.
 */
 bool task2(BinaryTree& binaryTree) {
 	// Tests counting of certain words of known number of appearences
@@ -151,7 +151,7 @@ bool task2(BinaryTree& binaryTree) {
 	int count3 = binaryTree.howManyOf("zealous");
 	int count4 = binaryTree.howManyOf("gobbledygook");
 
-	//binaryTree.printMostCommonWords(66);
+	binaryTree.printMostCommonWords(66);
 
 	if(count1 != 355 || count2 != 344 || count3 != 1 || count4 != 0) return false;
 	return true;
