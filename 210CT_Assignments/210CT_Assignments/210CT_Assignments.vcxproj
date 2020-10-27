@@ -138,10 +138,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Tester2.cpp" />
+    <ClCompile Include="src\Graph.cpp" />
+    <ClCompile Include="src\Tester.cpp" />
     <ClCompile Include="src\BinaryTree.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Algorithms.h" />
+    <ClInclude Include="src\Graph.h" />
     <ClInclude Include="src\BinaryTree.h" />
   </ItemGroup>
   <ItemGroup>

@@ -15,10 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Tester2.cpp">
+    <ClCompile Include="src\BinaryTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BinaryTree.cpp">
+    <ClCompile Include="src\Graph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Tester.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -27,6 +30,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\BinaryTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Algorithms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
