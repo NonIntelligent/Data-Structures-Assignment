@@ -52,9 +52,6 @@ void BinaryTree::_insert(std::string& word, BinaryTreeNode * node) {
 
 }
 
-void BinaryTree::_remove(std::string& word, BinaryTreeNode * node) {
-}
-
 // Searches through the nodes starting at root to find the word
 BinaryTreeNode* BinaryTree::_search(std::string& word, BinaryTreeNode * node) {
 	if(node != nullptr) {
@@ -69,6 +66,28 @@ BinaryTreeNode* BinaryTree::_search(std::string& word, BinaryTreeNode * node) {
 		}
 	}
 	else return nullptr;
+}
+
+// Used to rebalance an already built binary tree.
+// This method is an adjusted form of the insertArrayBalanced method that uses nodes instead of strings
+// The setRoot method also needs to be called to set the root.
+BinaryTreeNode * BinaryTree::_rebalanceTree(BinaryTreeNode * nodes[], int start, int end) {
+	// no more nodes to traverse
+	if(start > end) return nullptr;
+
+	// Make the middle element of each list a node
+	int mid = (start + end) / 2;
+	BinaryTreeNode* node = nodes[mid];
+
+	node->previous = nullptr;
+	node->count = 1;
+	node->nextLeft = _rebalanceTree(nodes, start, mid - 1);
+	node->nextRight = _rebalanceTree(nodes, mid + 1, end);
+
+	if(node->nextLeft != nullptr) node->nextLeft->previous = node;
+	if(node->nextRight != nullptr) node->nextRight->previous = node;
+
+	return node;
 }
 
 // Recursively counts the number of times a certain word appears in the tree
@@ -122,6 +141,7 @@ void BinaryTree::_findMostCommonWords(std::unordered_map<std::string, BinaryTree
 	}
 }
 
+// Recusively calculate the maximum depth of the tree
 int BinaryTree::_getMaxDepth(BinaryTreeNode * node) {
 	
 	// If node does not exist, do not change depth
@@ -229,12 +249,108 @@ void BinaryTree::insert_Iterative(std::string & word) {
 
 }
 
-void BinaryTree::remove_All_Of_Word(std::string& word) {
+// https://www.geeksforgeeks.org/binary-search-tree-set-2-delete/
+// This method is used to delete a single node that has the word to be removed.
+// The child pointers will be reassigned but the Binary Tree will be left unbalanced.
+void BinaryTree::remove(std::string & word) {
+	BinaryTreeNode* node = _search(word, root);
+
+	// Check if the node is on the left or right of the previous node
+	bool rightOfPrevious = node->previous->nextRight == node;
+
+	bool haveRight = node->nextRight != nullptr;
+	bool haveLeft = node->nextLeft != nullptr;
+
+	// If node is a leaf then delete and remove previous pointer
+	if(!haveLeft && !haveRight) {
+		if(rightOfPrevious)
+			node->previous->nextRight = nullptr;
+		else
+			node->previous->nextLeft = nullptr;
+
+		delete node;
+	}
+	// Node has two children
+	else if(haveLeft && haveRight) {
+		// Get replacement for node
+		BinaryTreeNode* temp = node->nextRight;
+		while(temp->nextLeft != nullptr) {
+			temp = temp->nextLeft;
+		}
+		
+		// temp will have no more nodes on its left and will be on the parent's left.
+		// Temp's parent will take on temp's child.
+		if(temp->previous != node)
+			temp->previous->nextLeft = temp->nextRight;
+		else
+			temp->previous->nextRight = temp->nextRight;
+
+		// Reassign the values then delete the replacement node.
+		node->word = temp->word;
+		node->count = temp->count;
+
+		if (temp->nextRight != nullptr) temp->nextRight->previous = temp->previous;
+		
+		delete temp;
+	}
+	// Node only has one child on the left
+	else if(haveLeft && !haveRight) {
+		if(rightOfPrevious)
+			node->previous->nextRight = node->nextLeft;
+		else
+			node->previous->nextLeft = node->nextLeft;
+
+		delete node;
+	}
+	// Node only has one child on the right
+	else {
+		if(rightOfPrevious)
+			node->previous->nextRight = node->nextRight;
+		else
+			node->previous->nextLeft = node->nextRight;
+
+		delete node;
+	}
+
+	balanced = false;
+}
+
+// Removes all nodes that possess the word to be removed.
+// Also rebalances the tree.
+void BinaryTree::remove_All_Of_Word(std::string word) {
+	// Counts the number of duplicate nodes to delete
+	int count = howManyOf(word);
+
+	// Removes all duplicate nodes
+	for(int i = 0; i < count; i++) {
+		remove(word);
+	}
+
+	// Store all nodes in the binary in a list in order 
+	// (already sorted in ascending value order as it's a binary tree)
+	std::vector<BinaryTreeNode*> allNodes;
+	inOrderTraversal(allNodes, root);
+
+	// Shrink so no elements in the underlying array are empty
+	allNodes.shrink_to_fit();
+	// Balances the tree
+	balanceTree(allNodes.data(), allNodes.size() - 1);
 }
 
 // Search for a word in the tree (can be nullptr)
 BinaryTreeNode * BinaryTree::search(std::string word) {
 	return _search(word, root);
+}
+
+// Given a dynamic list this method will traverse the tree in-order and store the nodes in the list
+void BinaryTree::inOrderTraversal(std::vector<BinaryTreeNode*>& list, BinaryTreeNode* node) {
+	if(node == nullptr) return;
+
+	inOrderTraversal(list, node->nextLeft);
+
+	list.push_back(node);
+
+	inOrderTraversal(list, node->nextRight);
 }
 
 // Altered version of the getMaxDepth method which increments a counter on any duplicates.
@@ -279,6 +395,20 @@ void BinaryTree::printMostCommonWords(int wordCount) {
 	}
 }
 
+// Will balance the Binary Tree if not already balanced
+void BinaryTree::balanceTree(BinaryTreeNode* nodes[], int lastIndex) {
+	if(balanced) return;
+
+	// Set the new root of the binaryTree
+	setRoot(_rebalanceTree(nodes, 0, lastIndex));
+	
+	// recalculates the max depth
+	maxdepth = 0;
+	getMaxDepth();
+
+	balanced = true;
+}
+
 // Returns tha depth of the tree (root inclusive)
 int BinaryTree::getMaxDepth() {
 	if(maxdepth > 0) return maxdepth;
@@ -286,8 +416,21 @@ int BinaryTree::getMaxDepth() {
 	return maxdepth = _getMaxDepth(root);
 }
 
-// Set the root of the binary tree if it has no root (parameter does not accept nullptr)
+// Returns the minimum value node following the left path of a given node.
+BinaryTreeNode * BinaryTree::getMinValue(BinaryTreeNode * node) {
+	BinaryTreeNode* current = node;
+	while(current != nullptr && current->nextLeft != nullptr) {
+		current = current->nextLeft;
+	}
+	return current;
+}
+
+bool BinaryTree::isBalanced() const{
+	return balanced;
+}
+
+// Set the root of the binary tree (parameter does not accept nullptr)
 void BinaryTree::setRoot(BinaryTreeNode * root) {
 	if(root == nullptr) return;
-	if(this->root == nullptr) this->root = root;
+	this->root = root;
 }
