@@ -8,21 +8,28 @@
 struct GraphVertex {
 	std::string value;
 
-	int* sonnetNumbers = nullptr;
-	std::vector<std::pair<GraphVertex*, int>> edges;
+	std::vector<int> sonnetNumbers;
+	std::vector<std::pair<GraphVertex*, float>> edges;
+
+	GraphVertex(std::string word) {
+		this->value = word;
+	};
 };
 
 class Graph {
 private:
-	std::vector<GraphVertex*> vertices;
+	std::vector<GraphVertex> vertices;
 
 private:
-	void _insert(std::string word);
-	void _remove(std:: string word);
-	void _calculateEdge();
+	float _calculateEdge(GraphVertex &vertex1, GraphVertex &vertex2);
 
 public:
 	Graph();
 	~Graph();
+
+	void insert(std::string word, std::vector<int> sonnets);
+	void remove(std:: string word);
+
+	void recalculateAllEdges();
 };
 

@@ -41,7 +41,7 @@ The map has values to one node that contains the word and with that I push the n
 However the method that traverses the tree and counts the words takes extremely long to compute.
 Task2 currently takes ~ 2.5 seconds (main computer, debug).
 */
-bool task2(BinaryTree* binaryTree) {
+bool task2(BinaryTree* binaryTree, vectorString &commonWords) {
 	auto start = std::chrono::high_resolution_clock::now();
 
 	// Tests counting of certain words of known number of appearences
@@ -50,7 +50,7 @@ bool task2(BinaryTree* binaryTree) {
 	int count3 = binaryTree->howManyOf("zealous");
 	int count4 = binaryTree->howManyOf("gobbledygook");
 
-	binaryTree->printMostCommonWords(66);
+	commonWords = binaryTree->printMostCommonWords(66);
 
 	// Measure time taken to run the task
 	auto end = std::chrono::high_resolution_clock::now();
@@ -86,13 +86,30 @@ bool task3(BinaryTree* binaryTree) {
 	return true;
 }
 
-bool task4() {
+/*
+Task4 I insert all 66 common words into the weighted, undirected graph structure.
+The edges between all new vertices are also calculated.
+Task 4 take ~20 seconds (main computer, debug).
+*/
+bool task4(Graph* graph, vectorString &commonWords) {
 	auto start = std::chrono::high_resolution_clock::now();
+	std::ifstream stream("res/Shakespeare.txt");
+
+	// Insert words into graph
+	for(auto word : commonWords) {
+		std::vector<int> sonnets = findWordInSonnets(word, stream);
+		graph->insert(word, sonnets);
+	}
 
 	// Measure time taken to run the task
 	auto end = std::chrono::high_resolution_clock::now();
 	auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 	std::cout << "Took " << duration << " milliseconds to execute";
+
+	stream.close();
+
+	if(commonWords.size() != 66) return false;
+
 	return true;
 }
 
@@ -120,20 +137,24 @@ int main() {
 	// Can be used in other tasks and destoryed at end of main
 	BinaryTree* searchTree = new BinaryTree();
 	Graph* weightedGraph = new Graph();
+	vectorString mostCommonWords;
 
 	std::cout << " Task1: " << std::boolalpha << task1(searchTree) << std::endl;
 
-	std::cout << " Task2: " << std::boolalpha << task2(searchTree) << std::endl;
+	std::cout << " Task2: " << std::boolalpha << task2(searchTree, mostCommonWords) << std::endl;
 
 	std::cout << " Task3: " << std::boolalpha << task3(searchTree) << std::endl;
 
-	std::cout << " Task4: " << std::boolalpha << task4() << std::endl;
+	std::cout << " Task4: " << std::boolalpha << task4(weightedGraph, mostCommonWords) << std::endl;
 
 	std::cout << " Task5: " << std::boolalpha << task5() << std::endl;
 
 	std::cout << " Task6: " << std::boolalpha << task6() << std::endl;
 
+	// returns claimed memory
+	mostCommonWords.clear();
 	delete(searchTree);
 	delete(weightedGraph);
+
 	return 0;
 }

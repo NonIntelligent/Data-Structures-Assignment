@@ -28,10 +28,10 @@ private:
 	void _destroy_nodes(BinaryTreeNode* node);
 	void _insert(std::string& word, BinaryTreeNode* node);
 	BinaryTreeNode* _search(std::string& word, BinaryTreeNode* node);
+	void _findMostCommonWords(std::unordered_map<std::string, BinaryTreeNode*>& map);
 
 	BinaryTreeNode* _rebalanceTree(BinaryTreeNode* nodes[], int start, int end);
 	int _howManyOf(std::string& word, BinaryTreeNode* node);
-	void _findMostCommonWords(std::unordered_map<std::string, BinaryTreeNode*>& map);
 
 	int _getMaxDepth(BinaryTreeNode* node);
 
@@ -48,7 +48,7 @@ public:
 	void inOrderTraversal(std::vector<BinaryTreeNode*>& list, BinaryTreeNode* node);
 
 	int howManyOf(std::string word);
-	void printMostCommonWords(int wordCount);
+	std::vector<std::string> printMostCommonWords(int wordCount);
 	void balanceTree(BinaryTreeNode* nodes[], int lastIndex);
 
 	int getMaxDepth();

@@ -68,6 +68,31 @@ BinaryTreeNode* BinaryTree::_search(std::string& word, BinaryTreeNode * node) {
 	else return nullptr;
 }
 
+/* Find the most common words in the binary tree and add them to the unordered map.
+This method uses breadth first traversal to count each word in the tree ignoring,
+binary tree nodes with the same value.
+// 9. Changed from recursive breadth first to iterative (using a queue) from commit 8
+*/
+void BinaryTree::_findMostCommonWords(std::unordered_map<std::string, BinaryTreeNode*>& map) {
+	std::queue<BinaryTreeNode*> nodes;
+	BinaryTreeNode* temp;
+	nodes.push(root);
+
+	// Traverses until every node is visited
+	while(!nodes.empty()) {
+		temp = nodes.front();
+		nodes.pop();
+
+		if(map.find(temp->word) == map.end()) {
+			int count = _howManyOf(temp->word, root);
+			temp->count = count;
+			map.emplace(temp->word, temp);
+		}
+		if (temp->nextLeft != nullptr) nodes.push(temp->nextLeft);
+		if (temp->nextRight != nullptr) nodes.push(temp->nextRight);
+	}
+}
+
 // Used to rebalance an already built binary tree.
 // This method is an adjusted form of the insertArrayBalanced method that uses nodes instead of strings
 // The setRoot method also needs to be called to set the root.
@@ -113,32 +138,6 @@ int BinaryTree::_howManyOf(std::string& word, BinaryTreeNode * node) {
 		return countLeft + countRight + 1; // Add up all of left and right + self
 	else 
 		return countLeft + countRight; // return what node has counted so far
-}
-
-
-/* Find the most common words in the binary tree and add them to the unordered map.
-This method uses breadth first traversal to count each word in the tree ignoring,
-binary tree nodes with the same value.
-// 9. Changed from recursive breadth first to iterative (using a queue) from commit 8
-*/
-void BinaryTree::_findMostCommonWords(std::unordered_map<std::string, BinaryTreeNode*>& map) {
-	std::queue<BinaryTreeNode*> nodes;
-	BinaryTreeNode* temp;
-	nodes.push(root);
-
-	// Traverses until every node is visited
-	while(!nodes.empty()) {
-		temp = nodes.front();
-		nodes.pop();
-
-		if(map.find(temp->word) == map.end()) {
-			int count = _howManyOf(temp->word, root);
-			temp->count = count;
-			map.emplace(temp->word, temp);
-		}
-		if (temp->nextLeft != nullptr) nodes.push(temp->nextLeft);
-		if (temp->nextRight != nullptr) nodes.push(temp->nextRight);
-	}
 }
 
 // Recusively calculate the maximum depth of the tree
@@ -363,8 +362,9 @@ int BinaryTree::howManyOf(std::string word) {
 // https://en.cppreference.com/w/cpp/container/priority_queue
 // This method creates a map and a priority queue to traverse the tree, count the number of duplicates
 // and print out the top duplicate words
-void BinaryTree::printMostCommonWords(int wordCount) {
+std::vector<std::string> BinaryTree::printMostCommonWords(int wordCount) {
 	std::unordered_map<std::string, BinaryTreeNode*> hashmap;
+	std::vector<std::string> commonWords;
 
 	// Create the priority queue to sort BinaryTreeNodes by its count
 	auto cmp = [](BinaryTreeNode* left, BinaryTreeNode* right) {return left->count < right->count; };
@@ -379,7 +379,7 @@ void BinaryTree::printMostCommonWords(int wordCount) {
 
 	// Prints out the words in the queue of the top (wordCount) of words
 	for(int i = 0; i < wordCount; i++) {
-		if(queue.empty()) return;
+		if(queue.empty()) break;
 
 		BinaryTreeNode* node = queue.top();
 
@@ -389,10 +389,14 @@ void BinaryTree::printMostCommonWords(int wordCount) {
 			i--;
 			continue;
 		}
-		// Print out the word and number of duplicates
+		// Print out the word and number of duplicates, also adds to the list
+		commonWords.emplace_back(queue.top()->word);
 		std::cout << queue.top()->word << ": " << queue.top()->count << std::endl;
 		queue.pop();
 	}
+
+	commonWords.shrink_to_fit();
+	return commonWords;
 }
 
 // Will balance the Binary Tree if not already balanced

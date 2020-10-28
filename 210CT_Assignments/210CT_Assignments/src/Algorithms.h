@@ -123,20 +123,26 @@ vectorString parseTxtAsWords(int lineStart, int lineEnd, std::string filePath) {
 
 // Used to find all of the sonnets that the word can be found in and returns a vector of sonnet numbers
 // This version requires an already opened stream to the Shakespeare text file.
-std::vector<int> findWordInSonnets(std::string target, std::ifstream stream) {
+std::vector<int> findWordInSonnets(std::string &target, std::ifstream &stream) {
 	// Initialise array and read stream
 	std::vector<int> result;
 
 	// Set stream back to start of the sonnets
 	stream.clear();
-	stream.seekg(253, std::ios::beg);
+	stream.seekg(0, std::ios::beg);
 
 	// Initialise variable to reuse in loops (improving performance)
 	std::string line;
 	std::string currentWord;
 	char letter;
 	int currentSonnet = 0;
-	int currentLine = 253;
+	int currentLine = 1;
+
+	// Skip first part of the text file
+	while(currentLine < 253) {
+		std::getline(stream, line);
+		currentLine++;
+	}
 
 	// Untill all lines are read, get the words and store them in the results array
 	while(currentLine <= 2867) {
