@@ -8,6 +8,7 @@
 struct GraphVertex {
 	std::string value;
 
+	bool visited = false;
 	std::vector<int> sonnetNumbers;
 	std::vector<std::pair<GraphVertex*, float>> edges;
 
@@ -30,6 +31,10 @@ public:
 	void insert(std::string word, std::vector<int> sonnets);
 	void remove(std:: string word);
 
+	void depthFirstSearch(int start, bool print);
+
+	bool isStronglyConnected();
+	void resetVisited();
 	void recalculateAllEdges();
 };
 

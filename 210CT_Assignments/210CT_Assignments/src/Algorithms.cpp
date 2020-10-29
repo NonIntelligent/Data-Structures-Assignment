@@ -122,26 +122,24 @@ vectorString parseTxtAsWords(int lineStart, int lineEnd, std::string filePath) {
 	return result;
 }
 
+/*
+14. Slight optimisation by getting rid of std::find and replacing with bool compare with commit 12.
+*/
 std::vector<int> findWordInSonnets(std::string &target, std::ifstream &stream) {
 	// Initialise array and read stream
 	std::vector<int> result;
 
-	// Set stream back to start of the sonnets
+	// Set stream back to start of the sonnets (line 253)
 	stream.clear();
-	stream.seekg(0, std::ios::beg);
+	stream.seekg(10774, std::ios::beg);
 
 	// Initialise variable to reuse in loops (improving performance)
 	std::string line;
 	std::string currentWord;
 	char letter;
+	bool sonnetFound = false;
 	int currentSonnet = 0;
-	int currentLine = 1;
-
-	// Skip first part of the text file
-	while(currentLine < 253) {
-		std::getline(stream, line);
-		currentLine++;
-	}
+	int currentLine = 253;
 
 	// Untill all lines are read, get the words and store them in the results array
 	while(currentLine <= 2867) {
@@ -150,6 +148,7 @@ std::vector<int> findWordInSonnets(std::string &target, std::ifstream &stream) {
 		// Set the current sonnet number
 		if(has_a_digit(line)) {
 			currentSonnet = getNumberFromLine(line);
+			sonnetFound = false;
 			currentLine++;
 			continue;
 		}
@@ -162,13 +161,13 @@ std::vector<int> findWordInSonnets(std::string &target, std::ifstream &stream) {
 			// 39 is equivalent to ' (apostrophe)
 			if(isalpha(letter) || letter == 39) {
 				currentWord.push_back(letter);
-				if(currentWord[0] == 39) currentWord.erase(currentWord.begin()); // No apostrophe at beginning of a word
+				if(currentWord[0] == 39) currentWord.pop_back(); // No apostrophe at beginning of a word.
 			}
 			else if(!currentWord.empty()) {// Once the end of word is reached then check if it's the target word
-				// If target word is found and the sonnet is not already in the list
-				bool sonnetDuplicate = std::find(result.begin(), result.end(), currentSonnet) != result.end();
-				if(target == currentWord && !sonnetDuplicate) {
+				// If target word is found and it hasn't already been added to the current sonnet
+				if(target == currentWord && !sonnetFound) {
 					result.push_back(currentSonnet);
+					sonnetFound = true;
 				}
 				currentWord.clear();
 			}

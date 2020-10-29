@@ -2,6 +2,9 @@
 
 #include "Algorithms.h"
 
+#include <stack>
+#include <iostream>
+
 // Calculates the edge between two vertex's by iterating through their common sonnets
 // Returns the inverse of common sonnets as specified by Task4
 // Time complexity is O(n^2) where n is the number of sonnets.
@@ -58,6 +61,62 @@ void Graph::insert(std::string word, std::vector<int> sonnets) {
 }
 
 void Graph::remove(std::string word) {
+}
+
+// https://www.youtube.com/watch?v=vRlaZ7Sh42Y
+// Searches through the graph vertices and marks them as visted when traversing through the edges.
+// Can also print out the value of the vertex using the 'print' parameter
+void Graph::depthFirstSearch(int start, bool print) {
+	if(start >= vertices.size()) return;
+
+	GraphVertex* vertex = vertices.at(start);
+	std::stack<GraphVertex*> stack;
+	stack.push(vertex);
+	vertex->visited = true;
+
+	// Until every vertex is checked for any possible paths
+	while(!stack.empty()) {
+		vertex = stack.top();
+		stack.pop();
+
+		if (print) std::cout << vertex->value << std::endl;
+
+		// Mark each connected vertex as visited and push to stack
+		for(auto pair : vertex->edges) {
+			if(!pair.first->visited) {
+				stack.push(pair.first);
+				pair.first->visited = true;
+			}
+		}
+
+	}
+
+}
+// https://www.youtube.com/watch?v=6RQXHIQZYrA
+// Checks if the graph is strongly connected (can every node be visited from start)
+bool Graph::isStronglyConnected() {
+	for(int i = 0; i < vertices.size(); i++) {
+		depthFirstSearch(i, false);
+
+		for(int j = 0; j < vertices.size(); j++) {
+			if(!vertices.at(j)->visited) {
+				return false;
+			}
+		}
+		// sets visited to false to prepare for next iteration
+		resetVisited();
+	}
+
+	// When every starting vertex can visit every other vertex
+	return true;
+}
+
+// Sets all vertices visited attribute to false
+void Graph::resetVisited() {
+	for(int i = 0; i < vertices.size(); i++) {
+		vertices.at(i)->visited = false;
+	}
+		
 }
 
 void Graph::recalculateAllEdges() {
