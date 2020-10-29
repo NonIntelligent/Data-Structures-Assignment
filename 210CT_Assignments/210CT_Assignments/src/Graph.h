@@ -18,10 +18,10 @@ struct GraphVertex {
 
 class Graph {
 private:
-	std::vector<GraphVertex> vertices;
+	std::vector<GraphVertex*> vertices;
 
 private:
-	float _calculateEdge(GraphVertex &vertex1, GraphVertex &vertex2);
+	float _calculateEdge(GraphVertex *vertex1, GraphVertex *vertex2);
 
 public:
 	Graph();

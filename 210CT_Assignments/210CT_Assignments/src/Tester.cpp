@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 #include <chrono>
 
 /* For Task1 I parse the words from the shakespeare text, excluding numbers ands single apostrophes.
