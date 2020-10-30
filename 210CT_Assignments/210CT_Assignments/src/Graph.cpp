@@ -3,6 +3,7 @@
 #include "Algorithms.h"
 
 #include <stack>
+#include <queue>
 #include <iostream>
 
 // Calculates the edge between two vertex's by iterating through their common sonnets
@@ -63,6 +64,7 @@ void Graph::insert(std::string word, std::vector<int> sonnets) {
 void Graph::remove(std::string word) {
 }
 
+
 // https://www.youtube.com/watch?v=vRlaZ7Sh42Y
 // Searches through the graph vertices and marks them as visted when traversing through the edges.
 // Can also print out the value of the vertex using the 'print' parameter
@@ -118,6 +120,120 @@ void Graph::resetVisited() {
 	}
 		
 }
+/* https://www.youtube.com/watch?v=q-7KEJD-ZlY
+Uses Dijksrta's algorithm to find the shortest path between two vertices
+Prints out that words traversed from start to end.
+Prints out the most featured sonnet among the traversed words (if tied will print all of them)
+// Returns the path as vector
+*/
+std::vector<GraphVertex*> Graph::shortestPath(std::string start, std::string end) {
+	if(start == end) return std::vector<GraphVertex*>();
+	// Check if the word exists as a vertex
+	GraphVertex* vertex1 = getVertex(start);
+	GraphVertex* vertex2 = getVertex(end);
+
+	if(vertex1 == nullptr || vertex2 == nullptr) {
+		std::cout << "Input word does not exist" << std::endl;
+		return std::vector<GraphVertex*>();
+	}
+
+	// Setup values (distance is default to infinity, visited is false, parent is null)
+	for(int i = 0; i < vertices.size(); i++) {
+		vertices.at(i)->distance = 1000.f;
+		vertices.at(i)->parent = nullptr;
+		resetVisited();
+	}
+
+	// i.e sonnet 3 would be at index 3
+	int sonnetScore[155] = {0};
+
+	// Sort in ascending order (shortest distance first)
+	auto cmp = [](GraphVertex* left, GraphVertex* right) {return left->distance > right->distance; };
+	std::priority_queue<GraphVertex*, std::vector<GraphVertex*>, decltype(cmp)> minimumQueue(cmp);
+
+	vertex1->distance = 0.f;
+	minimumQueue.push(vertex1);
+	// While there is a path/solution to the problem
+	while(!minimumQueue.empty()) {
+		GraphVertex* current = minimumQueue.top();
+		minimumQueue.pop();
+
+		if(current->visited) continue;
+
+		current->visited = true;
+
+		for(auto edge : current->edges) {
+			GraphVertex* target = edge.first;
+			float distance = edge.second;
+			// If there is a shorter path then adjust values
+			if(!target->visited && current->distance + distance < target->distance) {
+				target->distance = current->distance + distance;
+				target->parent = current;
+				minimumQueue.push(target);
+			}
+		}
+	}
+
+	// Construct the path following the parent of vertex2 (end parameter)
+	std::vector<GraphVertex*> path;
+	path.insert(path.begin(), vertex2);
+	GraphVertex* step = vertex2->parent;
+
+	while(step != nullptr) {
+		path.insert(path.begin(), step);
+		step = step->parent;
+	}
+
+	// work out highest scoring sonnet (Task 6 requirement)
+	int highScore = 0;
+
+	std::cout << "Vertex path is: "<< vertex1->value;
+	for(GraphVertex* v : path) {
+		if (v != vertex1)
+			std::cout << ", " << v->value;
+
+		// Increment the sonnet score for each sonnet that the word appears in
+		for(int sonnet : v->sonnetNumbers) {
+			sonnetScore[sonnet] ++;
+			if(highScore < sonnetScore[sonnet]) highScore = sonnetScore[sonnet];
+		}
+	}
+
+
+	// Print sonnet scores
+	std::cout << ": Highest Scoring Sonnets are";
+	for(int i = 1; i < 155; i++) {
+		if(sonnetScore[i] == highScore) {
+			std::cout << ", "<< i;
+		}
+	}
+
+	std::cout << " " << std::endl;
+	std::cout << " " << std::endl;
+
+	return path;
+}
 
 void Graph::recalculateAllEdges() {
+}
+
+// Retrieves the matching vertex from the vertices list
+GraphVertex * Graph::getVertex(std::string word) {
+	GraphVertex* vertex = nullptr;
+	for(GraphVertex* v : vertices) {
+		if(v->value == word) vertex = v;
+	}
+	return vertex;
+}
+
+//Retrieves the index of the element from the vertices list
+int Graph::getIndex(GraphVertex * element) {
+	int index = -1;
+	auto it = std::find(vertices.begin(), vertices.end(), element);
+
+	if(it != vertices.end()) {
+		index = std::distance(vertices.begin(), it);
+	}
+
+	return index;
 }
