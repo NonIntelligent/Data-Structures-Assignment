@@ -8,7 +8,11 @@
 struct GraphVertex {
 	std::string value;
 
+	// Used in other methods
+	GraphVertex* parent = nullptr;
 	bool visited = false;
+	float distance = 0.f;
+
 	std::vector<int> sonnetNumbers;
 	std::vector<std::pair<GraphVertex*, float>> edges;
 
@@ -17,9 +21,16 @@ struct GraphVertex {
 	};
 };
 
+struct GraphEdge {
+	GraphVertex* first;
+	GraphVertex* second;
+	float weight = 0;
+};
+
 class Graph {
 private:
 	std::vector<GraphVertex*> vertices;
+	std::vector<GraphEdge*> edges;
 
 private:
 	float _calculateEdge(GraphVertex *vertex1, GraphVertex *vertex2);
@@ -35,6 +46,10 @@ public:
 
 	bool isStronglyConnected();
 	void resetVisited();
+	std::vector<GraphVertex*> shortestPath(std::string start, std::string end);
 	void recalculateAllEdges();
+
+	GraphVertex* getVertex(std::string word);
+	int getIndex(GraphVertex* element);
 };
 

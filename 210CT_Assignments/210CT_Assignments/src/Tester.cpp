@@ -143,16 +143,21 @@ bool task5(Graph* graph) {
 /*
 Task 6 I use Dijkstra's algorithm to find the shortest path between two vertices.
 I will compare the result with the actual answer that I manually calculated.
-Task 6 takes ~ (main computer, debug).
-Task 6 takes ~ (main computer, release).
+Task 6 takes ~ 4 milliseconds (main computer, debug).
+Task 6 takes ~ 1 milliseconds (main computer, release).
 */
 bool task6(Graph* graph) {
 	auto start = std::chrono::high_resolution_clock::now();
+
+	std::vector<GraphVertex*> path = graph->shortestPath("have", "will");
 
 	// Measure time taken to run the task
 	auto end = std::chrono::high_resolution_clock::now();
 	double duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 	std::cout << "Took " << duration * 0.001 << " milliseconds to execute";
+
+	if(path.at(1)->value != "to") return false;
+
 	return true;
 }
 
