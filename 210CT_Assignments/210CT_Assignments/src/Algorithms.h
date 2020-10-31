@@ -14,7 +14,7 @@ This file is used to contain any other methods and algorithms that I need to use
 // Does the string contain a digit?
 bool has_a_digit(std::string &s);
 
-// Convert the string into an integer
+// Convert the string into an integer (only works if there is a numbers)
 int getNumberFromLine(std::string& line);
 
 // Quicksort partition algorithm (works for string or ints)
@@ -29,9 +29,10 @@ int partition(T* arr, int start, int end);
 void quickSort(int* arr, int start, int end);
 void quickSort(std::string* arr, int start, int end);
 
-// Parses a txt file for exculsively words and returns an array of words
-vectorString parseTxtAsWords(int lineStart, int lineEnd, std::string filePath);
+// Parses a txt file for exculsively words and returns an array of words and fills the cache with words.
+vectorString parseTxtAsWords(int lineStart, int lineEnd, std::string filePath, vectorString &fillCache);
 
-// Used to find all of the sonnets that the word can be found in and returns a vector of sonnet numbers
-// This version requires an already opened stream to the Shakespeare text file.
-std::vector<int> findWordInSonnets(std::string &target, std::ifstream &stream);
+// Used to find all of the sonnets that the word can be found in and returns a vector of sonnet numbers.
+// The cache was filled with words from lines 253-2867 in the 'parseTxtAsWords' method.
+// A word cache is used to improve time performance as reading each line takes too much time.
+std::vector<int> findWordInSonnetCache(std::string &target, vectorString &stringCache);

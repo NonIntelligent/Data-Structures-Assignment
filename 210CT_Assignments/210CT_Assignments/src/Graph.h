@@ -21,16 +21,9 @@ struct GraphVertex {
 	};
 };
 
-struct GraphEdge {
-	GraphVertex* first;
-	GraphVertex* second;
-	float weight = 0;
-};
-
 class Graph {
 private:
 	std::vector<GraphVertex*> vertices;
-	std::vector<GraphEdge*> edges;
 
 private:
 	float _calculateEdge(GraphVertex *vertex1, GraphVertex *vertex2);

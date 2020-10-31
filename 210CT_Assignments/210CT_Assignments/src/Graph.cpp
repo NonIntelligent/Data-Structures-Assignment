@@ -8,7 +8,7 @@
 
 // Calculates the edge between two vertex's by iterating through their common sonnets
 // Returns the inverse of common sonnets as specified by Task4
-// Time complexity is O(n^2) where n is the number of sonnets.
+// Time complexity is O(n^2) where n is the number of sonnets (max n = 154).
 float Graph::_calculateEdge(GraphVertex *vertex1, GraphVertex *vertex2) {
 	float count = 0.f;
 	int* arr1 = vertex1->sonnetNumbers.data();
@@ -61,7 +61,20 @@ void Graph::insert(std::string word, std::vector<int> sonnets) {
 	vertices.push_back(newVertex);
 }
 
+// Removes a vertex from the graph and all edges to and from the vertex.
 void Graph::remove(std::string word) {
+	GraphVertex* vertex = getVertex(word);
+	for(auto edge : vertex->edges) {
+		for(auto other : edge.first->edges) {
+			if(other.first == vertex) {
+				other.first = nullptr;
+				other.second = 0;
+			}
+		}
+		edge.first = nullptr;
+		edge.second = 0;
+	}
+	vertices.erase(std::remove(vertices.begin(), vertices.end(), vertex), vertices.end());
 }
 
 

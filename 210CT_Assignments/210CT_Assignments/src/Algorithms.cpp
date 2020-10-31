@@ -3,8 +3,6 @@
 #include <array>
 #include <iostream>
 
-// https://stackoverflow.com/questions/9642292/function-to-check-if-string-contains-a-number
-// Does the string contain a digit?
 bool has_a_digit(std::string& s) {
 	return std::any_of(s.begin(), s.end(), ::isdigit);
 }
@@ -69,7 +67,7 @@ void quickSort(std::string* arr, int start, int end) {
 	}
 }
 
-vectorString parseTxtAsWords(int lineStart, int lineEnd, std::string filePath) {
+vectorString parseTxtAsWords(int lineStart, int lineEnd, std::string filePath, vectorString &fillCache) {
 	// Initialise array and read stream
 	vectorString result;
 	std::ifstream stream(filePath);
@@ -86,12 +84,14 @@ vectorString parseTxtAsWords(int lineStart, int lineEnd, std::string filePath) {
 		currentLine++;
 	}
 
-	// Untill all lines are read, get the words and store them in the results array
+	// Until all lines are read, get the words and store them in the results array
 	while(currentLine <= lineEnd) {
 		std::getline(stream, line);
 
 		// Ignore Sonnet number (assignment requirement)
 		if(has_a_digit(line)) {
+			std::string num = std::to_string(getNumberFromLine(line));
+			fillCache.push_back(num);
 			currentLine++;
 			continue;
 		}
@@ -107,6 +107,7 @@ vectorString parseTxtAsWords(int lineStart, int lineEnd, std::string filePath) {
 				if(word[0] == 39) word.erase(word.begin()); // No apostrophe at beginning of a word
 			}
 			else if(!word.empty()) {// Once the end of word is reached then push to array
+				fillCache.push_back(word);
 				result.push_back(word);
 				word.clear();
 			}
@@ -118,62 +119,36 @@ vectorString parseTxtAsWords(int lineStart, int lineEnd, std::string filePath) {
 	// Clears buffers
 	stream.close();
 	// Can be later accessed as array without any empty elements
+	fillCache.shrink_to_fit();
 	result.shrink_to_fit();
 	return result;
 }
 
-/*
-14. Slight optimisation by getting rid of std::find and replacing with bool compare with commit 12.
-*/
-std::vector<int> findWordInSonnets(std::string &target, std::ifstream &stream) {
+std::vector<int> findWordInSonnetCache(std::string & target, vectorString & stringCache) {
 	// Initialise array and read stream
 	std::vector<int> result;
 
-	// Set stream back to start of the sonnets (line 253)
-	stream.clear();
-	stream.seekg(10774, std::ios::beg);
-
 	// Initialise variable to reuse in loops (improving performance)
-	std::string line;
 	std::string currentWord;
-	char letter;
 	bool sonnetFound = false;
 	int currentSonnet = 0;
-	int currentLine = 253;
+	int i = 0;
 
 	// Untill all lines are read, get the words and store them in the results array
-	while(currentLine <= 2867) {
-		std::getline(stream, line);
+	while(i < stringCache.size()) {
+		currentWord = stringCache.at(i);
 
 		// Set the current sonnet number
-		if(has_a_digit(line)) {
-			currentSonnet = getNumberFromLine(line);
+		if(has_a_digit(currentWord)) {
+			currentSonnet = getNumberFromLine(currentWord);
 			sonnetFound = false;
-			currentLine++;
-			continue;
+		}
+		else if(target == currentWord && !sonnetFound) {
+			result.push_back(currentSonnet);
+			sonnetFound = true;
 		}
 
-		// Read each letter of the line and add it to the word
-		for(auto it = line.begin(); it != line.end(); it++) {
-			letter = *it;
-
-			// Only add alphablet characters to the word
-			// 39 is equivalent to ' (apostrophe)
-			if(isalpha(letter) || letter == 39) {
-				currentWord.push_back(letter);
-				if(currentWord[0] == 39) currentWord.pop_back(); // No apostrophe at beginning of a word.
-			}
-			else if(!currentWord.empty()) {// Once the end of word is reached then check if it's the target word
-				// If target word is found and it hasn't already been added to the current sonnet
-				if(target == currentWord && !sonnetFound) {
-					result.push_back(currentSonnet);
-					sonnetFound = true;
-				}
-				currentWord.clear();
-			}
-		}
-
-		currentLine++;
+		i++;
 	}
 
 	// Can be later accessed as array without any empty elements
