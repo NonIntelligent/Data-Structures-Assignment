@@ -9,7 +9,7 @@ struct BinaryTreeNode {
 	int count = 0; // Number of copies of this word
 
 	// Pointers to the nodes around it
-	struct BinaryTreeNode* previous = nullptr; // previous is currently not used
+	struct BinaryTreeNode* previous = nullptr;
 	struct BinaryTreeNode* nextLeft = nullptr;
 	struct BinaryTreeNode* nextRight = nullptr;
 };

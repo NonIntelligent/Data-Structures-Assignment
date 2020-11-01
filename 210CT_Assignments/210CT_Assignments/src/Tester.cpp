@@ -25,7 +25,7 @@ bool task1(BinaryTree* binaryTree, vectorString &sonnetCache) {
 	quickSort(test, 0, list.size() - 1);
 
 	// This version of binary tree takes accepts duplicate nodes but is also balanced.
-	// The input requires a sorted list though
+	// The input requires a sorted list though (hence quicksort)
 	binaryTree->setRoot(binaryTree->insertArrayBalanced(test, 0, list.size() - 1));
 	int depth = binaryTree->getMaxDepth();
 
@@ -94,9 +94,10 @@ bool task3(BinaryTree* binaryTree) {
 
 /*
 Task4 I insert all 66 common words into the weighted, undirected graph structure.
-The edges between all new vertices are also calculated.
-Task 4 takes ~ 17 seconds (main computer, debug).
-Task 4 takes ~ 120 milliseconds (main computer, release).
+The edges between all new vertices are also calculated to save time during other operations.
+Task 4 takes ~ 3 seconds (main computer, debug).
+Task 4 takes ~ 30 milliseconds (main computer, release).
+Commit 16. Cut down time by ~70% by using the cache compared to previous commits
 */
 bool task4(Graph* graph, vectorString &commonWords, vectorString &stringCache) {
 	auto start = std::chrono::high_resolution_clock::now();

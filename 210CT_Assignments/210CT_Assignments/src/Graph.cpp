@@ -40,6 +40,7 @@ Graph::~Graph() {
 // Creates a new vertex to add to the graph and calculates the new vertex's edges
 // Copies the given vector into the newVertex's numbers
 // Time complexity of O(n^3) due to calculating the edge for every common sonnet and vertex in list.
+// However this only needs to be calculated the once.
 void Graph::insert(std::string word, std::vector<int> sonnets) {
 	GraphVertex* newVertex = new GraphVertex(word);
 	newVertex->sonnetNumbers = std::vector<int>(sonnets);

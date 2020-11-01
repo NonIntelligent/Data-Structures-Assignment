@@ -8,12 +8,15 @@
 struct GraphVertex {
 	std::string value;
 
-	// Used in other methods
-	GraphVertex* parent = nullptr;
-	bool visited = false;
+	// Used to complete Task 5 and 6 as this helps keep track of specific vertex values.
+	// Used to make desicions in those Tasks (find shortest path or strong connection)
+	bool visited = false; 
+	GraphVertex* parent = nullptr; 
 	float distance = 0.f;
 
+	// Task 4 requirement and used in Task 6.
 	std::vector<int> sonnetNumbers;
+	// Allows me to easily complete Task 5 as I can traverse the vertex edges to see if every vertex and visit another vertex.
 	std::vector<std::pair<GraphVertex*, float>> edges;
 
 	GraphVertex(std::string word) {
