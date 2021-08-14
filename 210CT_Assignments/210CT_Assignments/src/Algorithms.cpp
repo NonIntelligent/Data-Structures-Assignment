@@ -1,6 +1,7 @@
 #include "Algorithms.h"
 
 #include <array>
+#include <algorithm>
 #include <iostream>
 
 bool has_a_digit(std::string& s) {
