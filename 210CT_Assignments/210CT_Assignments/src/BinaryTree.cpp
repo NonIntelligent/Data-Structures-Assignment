@@ -4,7 +4,6 @@
 #include <queue>
 #include <stack>
 
-// Recaim memory by deleting nodes from tree
 void BinaryTree::_destroy_nodes(BinaryTreeNode* node) {
 	if(node != nullptr) {
 		// First recursively delete all nodes that are pointed to
@@ -15,8 +14,6 @@ void BinaryTree::_destroy_nodes(BinaryTreeNode* node) {
 	}
 }
 
-// Recursively search for the node to place the word in.
-// If node is a duplicate then increment count (saves a lot of space and is easy to get duplicate count)
 void BinaryTree::_insert(std::string& word, BinaryTreeNode * node) {
 	if(word < node->word) { // Word is less than current node
 		if(node->nextLeft != nullptr) {
@@ -54,7 +51,6 @@ void BinaryTree::_insert(std::string& word, BinaryTreeNode * node) {
 
 }
 
-// Searches through the nodes starting at root to find the word
 BinaryTreeNode* BinaryTree::_search(std::string& word, BinaryTreeNode * node) {
 	if(node != nullptr) {
 		if(word == node->word) {
@@ -70,11 +66,6 @@ BinaryTreeNode* BinaryTree::_search(std::string& word, BinaryTreeNode * node) {
 	else return nullptr;
 }
 
-/* Find the most common words in the binary tree and add them to the unordered map.
-This method uses breadth first traversal to count each word in the tree ignoring,
-binary tree nodes with the same value.
-// Commit 9. Changed from recursive breadth first to iterative (using a queue) from commit 8
-*/
 void BinaryTree::_findMostCommonWords(std::unordered_map<std::string, BinaryTreeNode*>& map) {
 	std::queue<BinaryTreeNode*> nodes;
 	BinaryTreeNode* temp;
@@ -95,9 +86,6 @@ void BinaryTree::_findMostCommonWords(std::unordered_map<std::string, BinaryTree
 	}
 }
 
-// Used to rebalance an already built binary tree.
-// This method is an adjusted form of the insertArrayBalanced method that uses nodes instead of strings
-// The setRoot method also needs to be called to set the root.
 BinaryTreeNode * BinaryTree::_rebalanceTree(BinaryTreeNode * nodes[], int start, int end) {
 	// no more nodes to traverse
 	if(start > end) return nullptr;
@@ -117,8 +105,6 @@ BinaryTreeNode * BinaryTree::_rebalanceTree(BinaryTreeNode * nodes[], int start,
 	return node;
 }
 
-// Recursively counts the number of times a certain word appears in the tree
-// Commit 9 fixes time consuming problem of commit 8 by not needing to traverse the entire tree every time
 int BinaryTree::_howManyOf(std::string& word, BinaryTreeNode * node) {
 	if(node == nullptr) return 0;
 	int countLeft;
@@ -142,7 +128,6 @@ int BinaryTree::_howManyOf(std::string& word, BinaryTreeNode * node) {
 		return countLeft + countRight; // return what node has counted so far
 }
 
-// Recusively calculate the maximum depth of the tree
 int BinaryTree::_getMaxDepth(BinaryTreeNode * node) {
 	
 	// If node does not exist, do not change depth
@@ -160,12 +145,10 @@ int BinaryTree::_getMaxDepth(BinaryTreeNode * node) {
 BinaryTree::BinaryTree() {
 }
 
-// Recaim all memory taken by nodes
 BinaryTree::~BinaryTree() {
 	_destroy_nodes(root);
 }
 
-// Insert a word into the binary tree
 void BinaryTree::insert(std::string& word) {
 	// Insert following the root path else create a root
 	if(root != nullptr) {
@@ -179,9 +162,6 @@ void BinaryTree::insert(std::string& word) {
 	}
 }
 
-// Given a sorted array, this method will construct a binary search tree with duplicate nodes and set it root node;
-// This method should only be used on an empty/destoryed tree 
-// @return The root node of which needs to be set to the binaryTree using setRoot(root)
 BinaryTreeNode* BinaryTree::insertArrayBalanced(std::string arr_words[], int start, int end) {
 
 	// no more nodes to traverse/create
@@ -203,7 +183,6 @@ BinaryTreeNode* BinaryTree::insertArrayBalanced(std::string arr_words[], int sta
 	return node;
 }
 
-// Insert words iteratively saving memory and stack space (best with unsorted lists)
 void BinaryTree::insert_Iterative(std::string & word) {
 	BinaryTreeNode* a = root; // ptr to traverse down the tree to find node location
 	BinaryTreeNode* b = nullptr; // Ptr follows a in traversal
@@ -251,9 +230,6 @@ void BinaryTree::insert_Iterative(std::string & word) {
 
 }
 
-// https://www.geeksforgeeks.org/binary-search-tree-set-2-delete/
-// This method is used to delete a single node that has the word to be removed.
-// The child pointers will be reassigned but the Binary Tree will be left unbalanced.
 void BinaryTree::remove(std::string & word) {
 	BinaryTreeNode* node = _search(word, root);
 
@@ -317,8 +293,6 @@ void BinaryTree::remove(std::string & word) {
 	balanced = false;
 }
 
-// Removes all nodes that possess the word to be removed.
-// Also rebalances the tree.
 void BinaryTree::remove_All_Of_Word(std::string word) {
 	// Counts the number of duplicate nodes to delete
 	int count = howManyOf(word);
@@ -339,12 +313,10 @@ void BinaryTree::remove_All_Of_Word(std::string word) {
 	balanceTree(allNodes.data(), allNodes.size() - 1);
 }
 
-// Search for a word in the tree (can be nullptr)
 BinaryTreeNode * BinaryTree::search(std::string word) {
 	return _search(word, root);
 }
 
-// Given a dynamic list this method will traverse the tree in-order and store the nodes in the list
 void BinaryTree::inOrderTraversal(std::vector<BinaryTreeNode*>& list, BinaryTreeNode* node) {
 	if(node == nullptr) return;
 
@@ -355,16 +327,12 @@ void BinaryTree::inOrderTraversal(std::vector<BinaryTreeNode*>& list, BinaryTree
 	inOrderTraversal(list, node->nextRight);
 }
 
-// Altered version of the getMaxDepth method which increments a counter on any duplicates.
 int BinaryTree::howManyOf(std::string word) {
 	if(root == nullptr) return -1;
 
 	return _howManyOf(word, root);
 }
 
-// https://en.cppreference.com/w/cpp/container/priority_queue
-// This method creates a map and a priority queue to traverse the tree, count the number of duplicates
-// and print out the top duplicate words
 std::vector<std::string> BinaryTree::printMostCommonWords(int wordCount) {
 	// Using an unordered map to keep a unique copy of each word and keep a track of it duplicates.
 	std::unordered_map<std::string, BinaryTreeNode*> hashmap;
@@ -403,7 +371,6 @@ std::vector<std::string> BinaryTree::printMostCommonWords(int wordCount) {
 	return commonWords;
 }
 
-// Will balance the Binary Tree if not already balanced
 void BinaryTree::balanceTree(BinaryTreeNode* nodes[], int lastIndex) {
 	if(balanced) return;
 
@@ -417,14 +384,12 @@ void BinaryTree::balanceTree(BinaryTreeNode* nodes[], int lastIndex) {
 	balanced = true;
 }
 
-// Returns tha depth of the tree (root inclusive)
 int BinaryTree::getMaxDepth() {
 	if(maxdepth > 0) return maxdepth;
 
 	return maxdepth = _getMaxDepth(root);
 }
 
-// Returns the minimum value node following the left path of a given node.
 BinaryTreeNode * BinaryTree::getMinValue(BinaryTreeNode * node) {
 	BinaryTreeNode* current = node;
 	while(current != nullptr && current->nextLeft != nullptr) {
@@ -437,7 +402,6 @@ bool BinaryTree::isBalanced() const{
 	return balanced;
 }
 
-// Set the root of the binary tree (parameter does not accept nullptr)
 void BinaryTree::setRoot(BinaryTreeNode * root) {
 	if(root == nullptr) return;
 	this->root = root;

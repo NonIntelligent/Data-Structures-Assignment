@@ -6,9 +6,6 @@
 #include <queue>
 #include <iostream>
 
-// Calculates the edge between two vertex's by iterating through their common sonnets
-// Returns the inverse of common sonnets as specified by Task4
-// Time complexity is O(n^2) where n is the number of sonnets (max n = 154).
 float Graph::_calculateEdge(GraphVertex *vertex1, GraphVertex *vertex2) {
 	float count = 0.f;
 	int* arr1 = vertex1->sonnetNumbers.data();
@@ -34,13 +31,13 @@ Graph::Graph() {
 }
 
 Graph::~Graph() {
+	for (int i = 0; i < vertices.size(); i++){
+		delete(vertices.at(i));
+	}
+
 	vertices.clear();
 }
 
-// Creates a new vertex to add to the graph and calculates the new vertex's edges
-// Copies the given vector into the newVertex's numbers
-// Time complexity of O(n^3) due to calculating the edge for every common sonnet and vertex in list.
-// However this only needs to be calculated the once.
 void Graph::insert(std::string word, std::vector<int> sonnets) {
 	GraphVertex* newVertex = new GraphVertex(word);
 	newVertex->sonnetNumbers = std::vector<int>(sonnets);
@@ -62,7 +59,6 @@ void Graph::insert(std::string word, std::vector<int> sonnets) {
 	vertices.push_back(newVertex);
 }
 
-// Removes a vertex from the graph and all edges to and from the vertex.
 void Graph::remove(std::string word) {
 	GraphVertex* vertex = getVertex(word);
 	for(auto edge : vertex->edges) {
@@ -79,9 +75,6 @@ void Graph::remove(std::string word) {
 }
 
 
-// https://www.youtube.com/watch?v=vRlaZ7Sh42Y
-// Searches through the graph vertices and marks them as visted when traversing through the edges.
-// Can also print out the value of the vertex using the 'print' parameter
 void Graph::depthFirstSearch(int start, bool print) {
 	if(start >= vertices.size()) return;
 
@@ -108,8 +101,7 @@ void Graph::depthFirstSearch(int start, bool print) {
 	}
 
 }
-// https://www.youtube.com/watch?v=6RQXHIQZYrA
-// Checks if the graph is strongly connected (can every node be visited from start)
+
 bool Graph::isStronglyConnected() {
 	for(int i = 0; i < vertices.size(); i++) {
 		depthFirstSearch(i, false);
@@ -127,19 +119,13 @@ bool Graph::isStronglyConnected() {
 	return true;
 }
 
-// Sets all vertices visited attribute to false
 void Graph::resetVisited() {
 	for(int i = 0; i < vertices.size(); i++) {
 		vertices.at(i)->visited = false;
 	}
 		
 }
-/* https://www.youtube.com/watch?v=q-7KEJD-ZlY
-Uses Dijksrta's algorithm to find the shortest path between two vertices
-Prints out that words traversed from start to end.
-Prints out the most featured sonnet among the traversed words (if tied will print all of them)
-// Returns the path as vector
-*/
+
 std::vector<GraphVertex*> Graph::shortestPath(std::string start, std::string end) {
 	if(start == end) return std::vector<GraphVertex*>();
 	// Check if the word exists as a vertex
@@ -228,10 +214,6 @@ std::vector<GraphVertex*> Graph::shortestPath(std::string start, std::string end
 	return path;
 }
 
-void Graph::recalculateAllEdges() {
-}
-
-// Retrieves the matching vertex from the vertices list
 GraphVertex * Graph::getVertex(std::string word) {
 	GraphVertex* vertex = nullptr;
 	for(GraphVertex* v : vertices) {
@@ -240,7 +222,6 @@ GraphVertex * Graph::getVertex(std::string word) {
 	return vertex;
 }
 
-//Retrieves the index of the element from the vertices list
 int Graph::getIndex(GraphVertex * element) {
 	int index = -1;
 	auto it = std::find(vertices.begin(), vertices.end(), element);
